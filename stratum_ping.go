@@ -28,6 +28,7 @@ type StratumPinger struct {
 }
 
 type Result struct {
+	Host  string
 	Trans int
 	Recev int
 	Loss  int64
@@ -85,8 +86,8 @@ func (p *StratumPinger) Do() Result {
 	// fmt.Printf("\n--- %s ping statistics ---\n", p.Host)
 	loss := 100 - int64(float64(success)/float64(p.Count)*100.0)
 	duration := time.Since(start)
-	res = Result{p.Count, success, loss, duration, "-1", "-1", "-1"}
-	// stats = fmt.Sprintf("%d packets transmitted, %d received, %d%% packet loss, time %s\n", p.Count, success, loss, duration)
+	res = Result{p.Host + ":" + string(p.Port), p.Count, success, loss, duration, "-1", "-1", "-1"}
+	// stats = fmt.Sprintf("[%s] %d packets transmitted, %d received, %d%% packet loss, time %s\n", p.Host, p.Count, success, loss, duration)
 	// fmt.Print(stats)
 	if success > 0 {
 		res.Min, res.Avg, res.Max = min.String(), (avg / time.Duration(avgCount)).String(), max.String()
