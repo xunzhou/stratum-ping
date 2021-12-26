@@ -27,9 +27,20 @@ type StratumPinger struct {
 	Tls   bool
 }
 
-func (p *StratumPinger) Do() string {
+type Result struct {
+	Trans int
+	Recev int
+	Loss  int64
+	Time  time.Duration
+	Min   string
+	Avg   string
+	Max   string
+}
+
+func (p *StratumPinger) Do() Result {
 	if err := p.Resolve(); err != nil {
-		return "err"
+		res := Result{}
+		return res
 	}
 	/*
 		creds := ""
@@ -49,7 +60,7 @@ func (p *StratumPinger) Do() string {
 	avg := time.Duration(0)
 	avgCount := 0
 	success := 0
-	res := ""
+	res := Result{}
 	stats := ""
 	start := time.Now()
 
@@ -71,17 +82,19 @@ func (p *StratumPinger) Do() string {
 		}
 		time.Sleep(1 * time.Second)
 	}
-	// fmt.Printf("\n--- %s ping statistics ---\n", p.Host)
+	fmt.Printf("\n--- %s ping statistics ---\n", p.Host)
 	loss := 100 - int64(float64(success)/float64(p.Count)*100.0)
 	duration := time.Since(start)
+	res = Result{p.Count, success, loss, duration, "-1", "-1", "-1"}
 	stats = fmt.Sprintf("%d packets transmitted, %d received, %d%% packet loss, time %s\n", p.Count, success, loss, duration)
-	// fmt.Print(stats)
+	fmt.Print(stats)
 	if success > 0 {
-		res = fmt.Sprintf("min/avg/max = %s, %s, %s\n", min.String(), (avg / time.Duration(avgCount)).String(), max.String())
-		// fmt.Println(res)
+		res.Min, res.Avg, res.Max = min.String(), (avg / time.Duration(avgCount)).String(), max.String()
+		stats2 := fmt.Sprintf("min/avg/max = %s, %s, %s\n", min.String(), (avg / time.Duration(avgCount)).String(), max.String())
+		fmt.Println(stats2)
 	}
 
-	return (stats + res)
+	return res
 }
 
 func (p *StratumPinger) Resolve() error {
