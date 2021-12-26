@@ -61,15 +61,15 @@ func (p *StratumPinger) Do() Result {
 	avgCount := 0
 	success := 0
 	res := Result{}
-	stats := ""
+	// stats := ""
 	start := time.Now()
 
 	for i := 0; i < p.Count; i++ {
 		elapsed, err := p.DoPing()
 		if err != nil {
-			fmt.Printf("%s (%s): seq=%d, %s\n", p.Host, p.Addr.String(), i, err)
+			// fmt.Printf("%s (%s): seq=%d, %s\n", p.Host, p.Addr.String(), i, err)
 		} else {
-			fmt.Printf("%s (%s): seq=%d, time=%s\n", p.Host, p.Addr.String(), i, elapsed.String())
+			// fmt.Printf("%s (%s): seq=%d, time=%s\n", p.Host, p.Addr.String(), i, elapsed.String())
 			if elapsed > max {
 				max = elapsed
 			}
@@ -82,16 +82,16 @@ func (p *StratumPinger) Do() Result {
 		}
 		time.Sleep(1 * time.Second)
 	}
-	fmt.Printf("\n--- %s ping statistics ---\n", p.Host)
+	// fmt.Printf("\n--- %s ping statistics ---\n", p.Host)
 	loss := 100 - int64(float64(success)/float64(p.Count)*100.0)
 	duration := time.Since(start)
 	res = Result{p.Count, success, loss, duration, "-1", "-1", "-1"}
-	stats = fmt.Sprintf("%d packets transmitted, %d received, %d%% packet loss, time %s\n", p.Count, success, loss, duration)
-	fmt.Print(stats)
+	// stats = fmt.Sprintf("%d packets transmitted, %d received, %d%% packet loss, time %s\n", p.Count, success, loss, duration)
+	// fmt.Print(stats)
 	if success > 0 {
 		res.Min, res.Avg, res.Max = min.String(), (avg / time.Duration(avgCount)).String(), max.String()
-		stats2 := fmt.Sprintf("min/avg/max = %s, %s, %s\n", min.String(), (avg / time.Duration(avgCount)).String(), max.String())
-		fmt.Println(stats2)
+		// stats2 := fmt.Sprintf("min/avg/max = %s, %s, %s\n", min.String(), (avg / time.Duration(avgCount)).String(), max.String())
+		// fmt.Println(stats2)
 	}
 
 	return res
